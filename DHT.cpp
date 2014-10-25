@@ -21,15 +21,13 @@ void DHT::begin(void) {
 }
 
 //boolean S == Scale.  True == Farenheit; False == Celcius
-float DHT::readTemperature(bool S) {
+float DHT::readTemperature() {
   float f;
 
   if (read()) {
     switch (_type) {
     case DHT11:
       f = data[2];
-      if(S)
-      	f = convertCtoF(f);
       	
       return f;
     case DHT22:
@@ -40,8 +38,6 @@ float DHT::readTemperature(bool S) {
       f /= 10;
       if (data[2] & 0x80)
 	f *= -1;
-      if(S)
-	f = convertCtoF(f);
 
       return f;
     }
@@ -49,13 +45,6 @@ float DHT::readTemperature(bool S) {
   return NAN;
 }
 
-float DHT::convertCtoF(float c) {
-	return c * 9 / 5 + 32;
-}
-
-float DHT::convertFtoC(float f) {
-  return (f - 32) * 5 / 9; 
-}
 
 float DHT::readHumidity(void) {
   float f;
@@ -74,20 +63,6 @@ float DHT::readHumidity(void) {
     }
   }
   return NAN;
-}
-
-float DHT::computeHeatIndex(float tempFahrenheit, float percentHumidity) {
-  // Adapted from equation at: https://github.com/adafruit/DHT-sensor-library/issues/9 and
-  // Wikipedia: http://en.wikipedia.org/wiki/Heat_index
-  return -42.379 + 
-           2.04901523 * tempFahrenheit + 
-          10.14333127 * percentHumidity +
-          -0.22475541 * tempFahrenheit*percentHumidity +
-          -0.00683783 * pow(tempFahrenheit, 2) +
-          -0.05481717 * pow(percentHumidity, 2) + 
-           0.00122874 * pow(tempFahrenheit, 2) * percentHumidity + 
-           0.00085282 * tempFahrenheit*pow(percentHumidity, 2) +
-          -0.00000199 * pow(tempFahrenheit, 2) * pow(percentHumidity, 2);
 }
 
 
